@@ -84,7 +84,7 @@ export default function HouseInterior({ registerClick, onExit, onAction, stats }
       </div>
 
       {/* ===== OPCION A: Panel de estado (arriba derecha) ===== */}
-      <div className="absolute top-12 right-2 z-20" style={{ background: 'rgba(0,0,0,0.72)', borderRadius: 12, padding: '8px 10px', minWidth: 130, border: '1px solid rgba(255,255,255,0.12)' }}>
+      <div className="absolute top-14 right-2 z-20" style={{ background: 'rgba(0,0,0,0.72)', borderRadius: 12, padding: '8px 10px', minWidth: 120, border: '1px solid rgba(255,255,255,0.12)' }}>
         <div style={{ color: '#a8d5b5', fontSize: 9, fontWeight: 600, marginBottom: 6, letterSpacing: 0.5 }}>GRANJA — Nv {stats.level}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 5 }}>
           <span style={{ fontSize: 12 }}>☀️</span>
