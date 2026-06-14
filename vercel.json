@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "app/api/messages/stream/route.ts": {
+      "maxDuration": 25
+    }
+  }
+}
