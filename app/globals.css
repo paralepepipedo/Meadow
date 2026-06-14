@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  height: 100%;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body {
+  background: #2d3a2e;
+  font-family: Inter, sans-serif;
+}
+
+/* ===== Personaje: animacion de caminar (4 frames CSS) ===== */
+@keyframes walk-bob {
+  0%   { transform: translateY(0) rotate(-3deg); }
+  25%  { transform: translateY(-4px) rotate(0deg); }
+  50%  { transform: translateY(0) rotate(3deg); }
+  75%  { transform: translateY(-4px) rotate(0deg); }
+  100% { transform: translateY(0) rotate(-3deg); }
+}
+.walking { animation: walk-bob 0.45s steps(4) infinite; }
+
+@keyframes idle-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+.idle { animation: idle-breathe 2.4s ease-in-out infinite; }
+
+/* ===== Lluvia ===== */
+@keyframes rain-fall {
+  0% { transform: translateY(-10vh); opacity: 0.8; }
+  100% { transform: translateY(110vh); opacity: 0.3; }
+}
+.raindrop {
+  position: absolute;
+  width: 2px;
+  height: 14px;
+  background: linear-gradient(rgba(174,214,241,0), rgba(174,214,241,0.9));
+  animation: rain-fall linear infinite;
+}
+
+/* ===== Nubes ===== */
+@keyframes cloud-drift {
+  from { transform: translateX(-150px); }
+  to { transform: translateX(110vw); }
+}
+.cloud { animation: cloud-drift linear infinite; }
+
+/* ===== Aparicion de recompensa flotante ===== */
+@keyframes float-up {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-50px); opacity: 0; }
+}
+.reward-float { animation: float-up 1.4s ease-out forwards; }
+
+/* ===== Transicion juego <-> chat ===== */
+.fade-in { animation: fadein 0.3s ease forwards; }
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===== Objetos interactivos ===== */
+.world-obj:active { transform: scale(0.92); }
+.world-obj { transition: transform 0.1s; cursor: pointer; }
+
+/* Scrollbar oscura en chat */
+.chat-scroll::-webkit-scrollbar { width: 4px; }
+.chat-scroll::-webkit-scrollbar-thumb { background: #2a3942; border-radius: 4px; }
