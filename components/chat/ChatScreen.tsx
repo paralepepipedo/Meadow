@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { type ChatMessage } from '@/hooks/useSSE';
 import { usePusherChat } from '@/hooks/usePusher';
+import { getPusherClient, getChatChannel } from '@/lib/pusher';
 import MessageList from './MessageList';
 import ChatInput from './ChatInput';
 
@@ -66,6 +67,20 @@ export default function ChatScreen({
   }, [user.id]);
 
   useEffect(() => { loadConversations(); }, [loadConversations]);
+
+  // Escuchar mensajes nuevos en todos los canales para actualizar contadores
+  useEffect(() => {
+    if (phase.phase !== 'selecting') return;
+    const pusher = getPusherClient();
+    const groupCh = pusher.subscribe('chat-group');
+    groupCh.bind('new-message', () => loadConversations());
+    const privateCh = pusher.subscribe(getChatChannel(user.id));
+    privateCh.bind('new-message', () => loadConversations());
+    return () => {
+      pusher.unsubscribe('chat-group');
+      pusher.unsubscribe(getChatChannel(user.id));
+    };
+  }, [phase.phase, user.id, loadConversations]);
 
   const addMessage = useCallback((m: ChatMessage) => {
     setMessages((prev) => (prev.some((p) => p.id === m.id) ? prev : [...prev, m]));
