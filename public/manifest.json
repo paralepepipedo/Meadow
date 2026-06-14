@@ -1,6 +1,6 @@
 {
-  "name": "Meadow",
-  "short_name": "Meadow",
+  "name": "Meadow App",
+"short_name": "Meadow",
   "description": "My little farm",
   "start_url": "/",
   "display": "standalone",
