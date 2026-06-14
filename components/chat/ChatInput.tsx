@@ -32,10 +32,14 @@ export default function ChatInput({
     onSent();
   };
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const sendText = async () => {
     const t = text.trim();
     if (!t) return;
     setText('');
+    // Mantener foco en el input para que no desaparezca el teclado
+    setTimeout(() => inputRef.current?.focus(), 50);
     await post({ type: 'text', content: t });
   };
 
@@ -145,6 +149,7 @@ export default function ChatInput({
             placeholder={uploading ? 'Subiendo...' : 'Escribe un mensaje'}
             disabled={uploading}
             autoComplete="off"
+            ref={inputRef}
             className="flex-1 bg-[#2a3942] text-chatText text-[15px] rounded-full px-4 py-2 outline-none"
           />
         )}

@@ -1,6 +1,7 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
-import { useSSE, type ChatMessage } from '@/hooks/useSSE';
+import { type ChatMessage } from '@/hooks/useSSE';
+import { usePusherChat } from '@/hooks/usePusher';
 import MessageList from './MessageList';
 import ChatInput from './ChatInput';
 
@@ -43,7 +44,7 @@ export default function ChatScreen({
     phase.phase === 'private' ? phase.contact.id : null;
 
   const active = phase.phase !== 'selecting';
-  const { setLastId } = useSSE(user.id, recipientId, active, addMessage);
+  const { setLastId } = usePusherChat(user.id, recipientId, active, addMessage);
 
   useEffect(() => {
     if (phase.phase === 'selecting') return;

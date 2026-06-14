@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import webpush from 'web-push';
+import { pusherServer, getChatChannel } from '@/lib/pusher';
 
 export const dynamic = 'force-dynamic';
 
@@ -78,6 +79,19 @@ export async function POST(req: Request) {
     RETURNING id, created_at`;
 
   sendPushToOthers(user_id, valid[0].display_name, rid).catch(() => {});
+
+  // Disparar evento Pusher para entrega instantanea
+  try {
+    const msgRow = await sql`
+      SELECT m.id, m.user_id, m.recipient_id, m.type, m.content, m.media_url, m.media_type, m.thumbnail_url, m.created_at, m.edited,
+             u.display_name, u.emoji, u.color
+      FROM messages m JOIN users u ON u.id = m.user_id
+      WHERE m.id = ${rows[0].id}`;
+    if (msgRow.length > 0) {
+      const channelName = getChatChannel(rid);
+      await pusherServer.trigger(channelName, 'new-message', msgRow[0]);
+    }
+  } catch {}
 
   return NextResponse.json({ ok: true, id: rows[0].id, created_at: rows[0].created_at });
 }
