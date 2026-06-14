@@ -242,14 +242,14 @@ export default function GameMap() {
           </div>
         )}
 
-        <GameHUD
+        {view !== 'interior' && <GameHUD
           coins={state?.coins ?? 0}
           level={state?.level ?? 1}
           xp={state?.xp ?? 0}
           weather={weather}
           userEmoji={user.emoji}
           onChangeUser={changeUser}
-        />
+        />}
 
         {toast && (
           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 bg-black/70 text-white font-pixel text-[9px] px-4 py-3 rounded-xl whitespace-nowrap reward-float" key={toast}>
