@@ -85,3 +85,4 @@ Abrir http://localhost:3000
 ## Instalar como app en Android
 
 Abrir la URL en Chrome → menu ⋮ → **Agregar a pantalla principal**.
+<!-- update -->
