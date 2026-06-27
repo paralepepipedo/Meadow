@@ -1,12 +1,11 @@
 'use client';
-// VERSION: v1.0
+// VERSION: v1.1
 // Recibe el contenido compartido desde Android (ej: "Compartir" en la app de YouTube)
 // via Web Share Target, lo guarda y redirige al juego para abrir el chat con el link listo.
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { extractYouTubeId } from '@/lib/youtube';
-
-export const SHARE_STORAGE_KEY = 'meadow_shared_text';
+import { SHARE_STORAGE_KEY } from '@/lib/share';
 
 export default function SharePage() {
   const router = useRouter();

@@ -12,7 +12,7 @@ import ChatScreen from '@/components/chat/ChatScreen';
 import { useTrigger } from '@/hooks/useTrigger';
 import { useVisibility, useBackButton } from '@/hooks/useVisibility';
 import { usePush } from '@/hooks/usePush';
-import { SHARE_STORAGE_KEY } from '@/app/share/page';
+import { SHARE_STORAGE_KEY } from '@/lib/share';
 
 type StoredUser = { id: number; display_name: string; emoji: string; color: string };
 const SPEED = 120; // px por segundo
