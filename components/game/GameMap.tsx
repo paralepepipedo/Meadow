@@ -12,6 +12,7 @@ import ChatScreen from '@/components/chat/ChatScreen';
 import { useTrigger } from '@/hooks/useTrigger';
 import { useVisibility, useBackButton } from '@/hooks/useVisibility';
 import { usePush } from '@/hooks/usePush';
+import { SHARE_STORAGE_KEY } from '@/app/share/page';
 
 type StoredUser = { id: number; display_name: string; emoji: string; color: string };
 const SPEED = 120; // px por segundo
@@ -22,6 +23,7 @@ export default function GameMap() {
   const [state, setState] = useState<any>(null);
   const [view, setView] = useState<'world' | 'interior'>('world');
   const [chatOpen, setChatOpen] = useState(false);
+  const [sharedText, setSharedText] = useState<string | null>(null);
   const [cropOpen, setCropOpen] = useState(false);
   const [animalOpen, setAnimalOpen] = useState<string | null>(null);
   const [toast, setToast] = useState('');
@@ -43,6 +45,16 @@ export default function GameMap() {
     }
     setUser(JSON.parse(saved));
   }, [router]);
+
+  // ===== Contenido recibido por "Compartir" (ej: link de YouTube) =====
+  useEffect(() => {
+    const pending = sessionStorage.getItem(SHARE_STORAGE_KEY);
+    if (pending) {
+      sessionStorage.removeItem(SHARE_STORAGE_KEY);
+      setSharedText(pending);
+      setChatOpen(true);
+    }
+  }, []);
 
   const refresh = useCallback(async (uid: number) => {
     try {
@@ -103,8 +115,16 @@ export default function GameMap() {
 
   // ===== Trigger secreto =====
   const openChat = useCallback(() => setChatOpen(true), []);
-  const closeChat = useCallback(() => setChatOpen(false), []);
+  const closeChat = useCallback(() => { setChatOpen(false); setSharedText(null); }, []);
   const { registerClick } = useTrigger(openChat);
+
+  // Avisar al blackout de privacidad (script vanilla en layout.tsx) que el chat
+  // ya quedo fuera del DOM, para que pueda destaparse sin riesgo de flash.
+  useEffect(() => {
+    if (!chatOpen) {
+      window.dispatchEvent(new Event('meadow:chat-closed'));
+    }
+  }, [chatOpen]);
 
   // Proteccion: minimizar / apagar pantalla / cambiar app cierra el chat
   const { setPickingFile } = useVisibility(chatOpen, closeChat);
@@ -291,7 +311,14 @@ export default function GameMap() {
       </div>
 
       {/* ===== CHAT (overlay, el juego queda montado debajo) ===== */}
-      {chatOpen && <ChatScreen user={user} onClose={closeChat} onPickingFile={setPickingFile} />}
+      {chatOpen && (
+        <ChatScreen
+          user={user}
+          onClose={closeChat}
+          onPickingFile={setPickingFile}
+          initialSharedText={sharedText}
+        />
+      )}
     </main>
   );
 }

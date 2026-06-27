@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { type ChatMessage } from '@/hooks/useSSE';
 import { usePusherChat } from '@/hooks/usePusher';
 import { getPusherClient, getChatChannel } from '@/lib/pusher';
+import { isYouTubeLink } from '@/lib/youtube';
 import MessageList from './MessageList';
 import ChatInput from './ChatInput';
 
@@ -28,7 +29,10 @@ type ContactState =
 function lastMessagePreview(msg: Conversation['last_message'], myId: number): string {
   if (!msg) return 'Sin mensajes';
   const prefix = msg.sender_id === myId ? 'Tú: ' : `${msg.emoji} `;
-  if (msg.type === 'text') return prefix + (msg.content?.slice(0, 35) || '');
+  if (msg.type === 'text') {
+    if (isYouTubeLink(msg.content)) return prefix + '📺 Video de YouTube';
+    return prefix + (msg.content?.slice(0, 35) || '');
+  }
   if (msg.type === 'image') return prefix + 'Imagen';
   if (msg.type === 'audio') return prefix + 'Audio';
   if (msg.type === 'video') return prefix + 'Video';
@@ -49,12 +53,16 @@ export default function ChatScreen({
   user,
   onClose,
   onPickingFile,
+  initialSharedText,
 }: {
   user: StoredUser;
   onClose: () => void;
   onPickingFile?: (val: boolean) => void;
+  initialSharedText?: string | null;
 }) {
-  const [phase, setPhase] = useState<ContactState>({ phase: 'selecting' });
+  const [phase, setPhase] = useState<ContactState>(
+    initialSharedText ? { phase: 'group' } : { phase: 'selecting' }
+  );
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -217,6 +225,7 @@ export default function ChatScreen({
         recipientId={phase.phase === 'group' ? null : phase.contact.id}
         onSent={() => {}}
         onPickingFile={onPickingFile}
+        initialText={phase.phase === 'group' ? initialSharedText : null}
       />
     </div>
   );

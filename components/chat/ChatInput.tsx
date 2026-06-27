@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import StickerPicker from './StickerPicker';
 
 export default function ChatInput({
@@ -7,11 +7,13 @@ export default function ChatInput({
   recipientId,
   onSent,
   onPickingFile,
+  initialText,
 }: {
   userId: number;
   recipientId: number | null;
   onSent: () => void;
   onPickingFile?: (val: boolean) => void;
+  initialText?: string | null;
 }) {
   const [text, setText] = useState('');
   const [showStickers, setShowStickers] = useState(false);
@@ -22,6 +24,11 @@ export default function ChatInput({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Precargar texto recibido por "Compartir" (ej: link de YouTube) — el usuario debe tocar enviar
+  useEffect(() => {
+    if (initialText) setText(initialText);
+  }, [initialText]);
 
   const post = async (body: Record<string, any>) => {
     await fetch('/api/messages', {

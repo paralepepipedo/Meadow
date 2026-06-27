@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import type { ChatMessage } from '@/hooks/useSSE';
 import MediaMessage from './MediaMessage';
+import YouTubePreview from './YouTubePreview';
+import { extractYouTubeId } from '@/lib/youtube';
 
 type Props = {
   msg: ChatMessage;
@@ -15,6 +17,7 @@ export default function MessageBubble({ msg, mine, onEdit, onDelete }: Props) {
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(msg.content || '');
   const time = new Date(msg.created_at).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+  const youtubeId = msg.type === 'text' ? extractYouTubeId(msg.content) : null;
 
   const handleLongPress = () => {
     if (mine) setMenuOpen(true);
@@ -121,6 +124,8 @@ export default function MessageBubble({ msg, mine, onEdit, onDelete }: Props) {
                 <button onClick={() => setEditing(false)} className="bg-gray-700 text-gray-300 text-[12px] rounded-lg px-3 py-1">Cancelar</button>
               </div>
             </div>
+          ) : youtubeId ? (
+            <YouTubePreview videoId={youtubeId} />
           ) : (
             msg.content && <p className="text-[14px] text-chatText whitespace-pre-wrap break-words">{msg.content}</p>
           )}
