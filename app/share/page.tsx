@@ -1,18 +1,19 @@
-'use client';
-// VERSION: v1.1
+﻿'use client';
+// VERSION: v1.2
 // Recibe el contenido compartido desde Android (ej: "Compartir" en la app de YouTube)
 // via Web Share Target, lo guarda y redirige al juego para abrir el chat con el link listo.
-import { useEffect } from 'react';
+// useSearchParams() exige un Suspense boundary en Next.js App Router (build estatico),
+// por eso la logica vive en un componente interno separado del export default.
+import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { extractYouTubeId } from '@/lib/youtube';
 import { SHARE_STORAGE_KEY } from '@/lib/share';
 
-export default function SharePage() {
+function ShareRedirect() {
   const router = useRouter();
   const params = useSearchParams();
 
   useEffect(() => {
-    // YouTube (y otras apps) pueden mandar el link en distintos campos segun version
     const url = params.get('url') || '';
     const text = params.get('text') || '';
     const combined = [url, text].filter(Boolean).join(' ');
@@ -29,8 +30,15 @@ export default function SharePage() {
     router.replace('/game');
   }, [params, router]);
 
+  return null;
+}
+
+export default function SharePage() {
   return (
     <main className="min-h-screen flex items-center justify-center" style={{ background: '#4a7c59' }}>
+      <Suspense fallback={null}>
+        <ShareRedirect />
+      </Suspense>
       <p className="font-pixel text-[10px] text-white">Abriendo Meadow...</p>
     </main>
   );
