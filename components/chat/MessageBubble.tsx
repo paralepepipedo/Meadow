@@ -127,7 +127,7 @@ export default function MessageBubble({ msg, mine, onEdit, onDelete }: Props) {
           ) : youtubeId ? (
             <YouTubePreview videoId={youtubeId} />
           ) : (
-            msg.content && <p className="text-[14px] text-chatText whitespace-pre-wrap break-words">{msg.content}</p>
+            msg.content && <p data-chat-msg className="text-[14px] text-chatText whitespace-pre-wrap break-words">{msg.content}</p>
           )}
 
           <div className="flex items-center justify-end gap-1 mt-0.5">

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+// @ts-ignore: Allow importing global CSS without type declarations in this file
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -83,7 +84,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               function hide(){
                 el.style.display = 'none';
               }
-              function onHidden(){ show(); }
+              function onHidden(){
+  show();
+  document.querySelectorAll('[data-chat-msg]').forEach(function(n){ n.textContent = ''; });
+}
               function onVisible(){
                 // Esperar la señal de que React ya cerro el chat antes de descubrir la pantalla.
                 // Si la señal nunca llega (no habia chat abierto), se quita por timeout corto.
